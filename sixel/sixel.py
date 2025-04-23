@@ -25,9 +25,9 @@ class SixelWriter:
                 output.write('\x1b7')  # DECSC
 
     def restore_position(self, output):
-        if not self._body_only:
-            if os.isatty(output.fileno()):
-                output.write('\x1b8')  # DECRC
+        if not self._body_only \
+            and os.isatty(output.fileno()):
+            output.write('\x1b8')  # DECRC
 
     def move_x(self, n, fabsolute, output):
         if not self._body_only:
@@ -60,7 +60,8 @@ class SixelWriter:
              ncolor=256,
              alpha_threshold=0,
              chromakey=False,
-             fast=True):
+             fast=True,
+             go_back=True):
 
         try:
             filename.seek(0)
@@ -86,4 +87,5 @@ class SixelWriter:
             sixel_converter.write(output, body_only=self._body_only)
 
         finally:
-            self.restore_position(output)
+            if go_back:
+                self.restore_position(output)
